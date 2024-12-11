@@ -3,20 +3,25 @@ workflows:
     name: Build Android APK
     environment:
       vars:
-        GRADLE_TASK: "assembleDebug" # Replace with `assembleRelease` for a release build
-      android:
-        ndk: latest
-        kotlin: latest
-        java: 11 # Ensure compatibility with your Gradle and Android version
+        GRADLE_TASK: "assembleDebug" # Use "assembleRelease" for a release build
+        JAVA_VERSION: 11 # Specify Java version
     triggering:
       events:
-        - push
+        - push # Triggers the workflow on push
     scripts:
-      - name: Set up the Android environment
+      - name: Install dependencies
         script: |
-          echo "Setting up Android environment"
-      - name: Clean project
+          echo "Installing Gradle dependencies..."
+          chmod +x gradlew
+          ./gradlew dependencies
+      - name: Build the APK
         script: |
-          cd workspaces
-
-comments:  Routine ?
+          echo "Building APK..."
+          ./gradlew $GRADLE_TASK
+      - name: Export APK
+        script: |
+          echo "Exporting APK..."
+          mkdir -p $CM_BUILD_DIR/artifacts/apk
+          cp app/build/outputs/apk/debug/*.apk $CM_BUILD_DIR/artifacts/apk/ # Update path if necessary
+    artifacts:
+      - $CM_BUILD_DIR/artifacts/apk/*.apk # Exports the built APK
