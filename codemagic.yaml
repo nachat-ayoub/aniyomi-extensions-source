@@ -1,0 +1,22 @@
+workflows:
+  android-apk:
+    name: Build Android APK
+    environment:
+      vars:
+        GRADLE_TASK: "assembleDebug" # Replace with `assembleRelease` for a release build
+      android:
+        ndk: latest
+        kotlin: latest
+        java: 11 # Ensure compatibility with your Gradle and Android version
+    triggering:
+      events:
+        - push
+    scripts:
+      - name: Set up the Android environment
+        script: |
+          echo "Setting up Android environment"
+      - name: Clean project
+        script: |
+          cd workspaces
+
+comments:  Routine ?
